@@ -492,6 +492,7 @@
 				86F3EB371CBDDF500060C35D /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		86F3EB381CBDDF500060C35D /* Build configuration list for PBXNativeTarget "Robotics UnlimitedTests" */ = {
 			isa = XCConfigurationList;
@@ -500,6 +501,7 @@
 				86F3EB3A1CBDDF500060C35D /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		86F3EB3B1CBDDF500060C35D /* Build configuration list for PBXNativeTarget "Robotics UnlimitedUITests" */ = {
 			isa = XCConfigurationList;
@@ -508,6 +510,7 @@
 				86F3EB3D1CBDDF500060C35D /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
