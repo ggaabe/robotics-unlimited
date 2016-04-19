@@ -9,76 +9,26 @@
 import UIKit
 import QuartzCore
 import SceneKit
+import CoreBluetooth
 
 class GameViewController: UIViewController {
     let screenSize: CGRect = UIScreen.mainScreen().bounds
     let backgroundArray = ["art.scnassets/ship.scn", "art.scnassets/spheres.scn", "art.scnassets/squares.scn"]
     var backgroundIndex : Int = 0
+    var bleManager : BLEManager!
     
     override func viewDidLoad() {
             super.viewDidLoad()
             print(screenSize)
             let scnView = self.view as! SCNView
-            scnView.scene = MyScene()
-            MyScene().initializeRobot((scnView.scene?.rootNode)!)
-
+             bleManager = BLEManager()
             scnView.scene = SCNScene(named: backgroundArray[backgroundIndex])! //MyScene()
             MyScene().initializeRobot((scnView.scene?.rootNode)!)
             
             scnView.pointOfView = scnView.scene?.rootNode.childNodeWithName("CAMERA", recursively: false)
             print(scnView.scene?.rootNode.childNodes)
             //just find the cameranode and reasign its original vector to it
-        
-            //scnView.backgroundColor = UIColor.blackColor()
-            
-//        super.viewDidLoad()
-        
-//        // create a new scene
-//        let scene = SCNScene(named: "art.scnassets/ship.scn")!
-//        
-//        // create and add a camera to the scene
-//        let cameraNode = SCNNode()
-//        cameraNode.camera = SCNCamera()
-//        scene.rootNode.addChildNode(cameraNode)
-//        
-//        // place the camera
-//        cameraNode.position = SCNVector3(x: 0, y: 0, z: 15)
-//        
-//        // create and add a light to the scene
-//        let lightNode = SCNNode()
-//        lightNode.light = SCNLight()
-//        lightNode.light!.type = SCNLightTypeOmni
-//        lightNode.position = SCNVector3(x: 0, y: 10, z: 10)
-//        scene.rootNode.addChildNode(lightNode)
-//        
-//        // create and add an ambient light to the scene
-//        let ambientLightNode = SCNNode()
-//        ambientLightNode.light = SCNLight()
-//        ambientLightNode.light!.type = SCNLightTypeAmbient
-//        ambientLightNode.light!.color = UIColor.darkGrayColor()
-//        scene.rootNode.addChildNode(ambientLightNode)
-//        
-//        // retrieve the ship node
-//        let ship = scene.rootNode.childNodeWithName("ship", recursively: true)!
-//        
-//        // animate the 3d object
-//        ship.runAction(SCNAction.repeatActionForever(SCNAction.rotateByX(0, y: 2, z: 0, duration: 1)))
-//        
-//        // retrieve the SCNView
-//        let scnView = self.view as! SCNView
-//        
-//        // set the scene to the view
-//        scnView.scene = scene
-//        
-//        // allows the user to manipulate the camera
-//        scnView.allowsCameraControl = true
-//        
-//        // show statistics such as fps and timing information
-//        scnView.showsStatistics = true
-//        
-//        // configure the view
-//        scnView.backgroundColor = UIColor.blackColor()
-//        
+
 //        // add a tap gesture recognizer
 //        let tapGesture = UITapGestureRecognizer(target: self, action: "handleTap:")
 //        scnView.addGestureRecognizer(tapGesture)
@@ -89,7 +39,13 @@ class GameViewController: UIViewController {
         scnView.addGestureRecognizer(armMovementRecognizer)
 
         //scnView.allowsCameraControl = true
+//        btDiscoverySharedInstance
        
+//        dispatch_async(dispatch_get_main_queue(), {
+//            print("sending position")
+//            self.sendPosition(8)
+//        })
+        
     }
     
     var previousY :CGFloat = 0
@@ -189,6 +145,23 @@ class GameViewController: UIViewController {
 //    override func shouldAutorotate() -> Bool {
 //        return true
 //    }
+    
+    func sendPosition(position: UInt8) {
+        // 1
+//        if !allowTX {
+//            return
+//        }
+        
+        // 2
+        // Validate value
+        
+        // 4
+        // Send position to BLE Shield (if service exists and is connected)
+        if let bleService = btDiscoverySharedInstance.bleService {
+            print("bleService Activated")
+            bleService.writePosition(position)
+        }
+    }
     
     override func prefersStatusBarHidden() -> Bool {
         return true
