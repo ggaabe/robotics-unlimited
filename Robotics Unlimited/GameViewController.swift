@@ -30,14 +30,6 @@ class GameViewController: UIViewController {
 
         scnView.autoenablesDefaultLighting = true
         
-//        let alert = UIAlertView()
-//        alert.title = "Alert"
-//        alert.message = "Here's a message"
-//        alert.addButtonWithTitle("Understod")
-//        alert.show()
-
-        
-        print("test")
         let armMovementRecognizer = UIPanGestureRecognizer(target: self, action: #selector(GameViewController.handleArmMovement(_:)))
         scnView.addGestureRecognizer(armMovementRecognizer)
         
