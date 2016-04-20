@@ -21,30 +21,25 @@ class GameViewController: UIViewController {
             super.viewDidLoad()
             print(screenSize)
             let scnView = self.view as! SCNView
-             bleManager = BLEManager()
+            bleManager = BLEManager()
             scnView.scene = SCNScene(named: backgroundArray[backgroundIndex])! //MyScene()
             MyScene().initializeRobot((scnView.scene?.rootNode)!)
             
             scnView.pointOfView = scnView.scene?.rootNode.childNodeWithName("CAMERA", recursively: false)
             print(scnView.scene?.rootNode.childNodes)
-            //just find the cameranode and reasign its original vector to it
 
-//        // add a tap gesture recognizer
-//        let tapGesture = UITapGestureRecognizer(target: self, action: "handleTap:")
-//        scnView.addGestureRecognizer(tapGesture)
         scnView.autoenablesDefaultLighting = true
+        
+//        let alert = UIAlertView()
+//        alert.title = "Alert"
+//        alert.message = "Here's a message"
+//        alert.addButtonWithTitle("Understod")
+//        alert.show()
+
         
         print("test")
         let armMovementRecognizer = UIPanGestureRecognizer(target: self, action: #selector(GameViewController.handleArmMovement(_:)))
         scnView.addGestureRecognizer(armMovementRecognizer)
-
-        //scnView.allowsCameraControl = true
-//        btDiscoverySharedInstance
-       
-//        dispatch_async(dispatch_get_main_queue(), {
-//            print("sending position")
-//            self.sendPosition(8)
-//        })
         
     }
     
@@ -76,8 +71,9 @@ class GameViewController: UIViewController {
                 }else{
                     backgroundIndex += 1
                 }
-                scnView.scene = SCNScene(named: backgroundArray[backgroundIndex])!
-                MyScene().initializeRobot((scnView.scene?.rootNode)!)
+                let newScene = SCNScene(named: backgroundArray[backgroundIndex])!
+                MyScene().transferToNewScene((scnView.scene?.rootNode)!, newSceneRootNode: newScene.rootNode)
+                scnView.scene = newScene
             }
         }
         if(hitResults.count > 0){
@@ -90,19 +86,25 @@ class GameViewController: UIViewController {
                 let rotateAction = SCNAction.rotateByAngle(velocity/100, aroundAxis: SCNVector3(x: 2.0, y: 0.0, z: 0.0), duration: 0.0)
                 //I CAN POSSIBLY CHANGE THE PIVOT
                 result.node.runAction(rotateAction)
-                
-                /*scnView.scene = SCNScene(named: "art.scnassets/ship.scn")!
-                MyScene().initializeRobot((scnView.scene?.rootNode)!)*/
-                
+                print(result.node.name! + " Euler Angle: " + String(result.node.eulerAngles))
+                let angleInfo = result.node.name! + " Euler angle: " + String(result.node.eulerAngles)
+                let data = angleInfo.dataUsingEncoding(NSUTF8StringEncoding)
+             
+                if (bleManager.bleHandler.subscribed){
+
+                    bleManager.bleHandler.globalBLEPeripheralList[0].updateValue(data!, forCharacteristic: bleManager.bleHandler.holyCharacteristic, onSubscribedCentrals: [bleManager.bleHandler.globalBLECentralList[0]])
+                }
                 
             }
-        }else{
-    
         }
-        // check what nodes are tapped
-             //   let p = gestureRecognize.locationInView(scnView)   //pass a robot arm to locationInView.
         
+    }
+    
+    override func viewDidAppear(animated: Bool) {
         
+        let alert = UIAlertController(title: "Instructions", message: "Swipe the arms to control arm movement! Swipe the bottom of the screen to change the background!", preferredStyle: UIAlertControllerStyle.Alert)
+        alert.addAction(UIAlertAction(title: "Got it!", style: UIAlertActionStyle.Cancel, handler: nil))
+        self.presentViewController(alert, animated: true, completion: nil)
     }
     
     func handleTap(gestureRecognize: UIGestureRecognizer) {
@@ -142,26 +144,10 @@ class GameViewController: UIViewController {
     }
 
     
-//    override func shouldAutorotate() -> Bool {
-//        return true
-//    }
-    
-    func sendPosition(position: UInt8) {
-        // 1
-//        if !allowTX {
-//            return
-//        }
-        
-        // 2
-        // Validate value
-        
-        // 4
-        // Send position to BLE Shield (if service exists and is connected)
-        if let bleService = btDiscoverySharedInstance.bleService {
-            print("bleService Activated")
-            bleService.writePosition(position)
-        }
+    override func shouldAutorotate() -> Bool {
+        return false
     }
+    
     
     override func prefersStatusBarHidden() -> Bool {
         return true
